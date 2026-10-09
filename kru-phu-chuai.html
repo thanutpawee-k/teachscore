@@ -1,0 +1,596 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>โปรแกรมช่วยคำนวณคะแนนของครูผู้ช่วย</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Tahoma, sans-serif;
+      background: #f1f5fb;
+      color: #26374a;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #245ca8, #347fd3);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 18px;
+      margin-bottom: 22px;
+    }
+
+    header h1 {
+      font-size: 27px;
+      margin: 0 0 8px;
+    }
+
+    header p {
+      margin: 0;
+    }
+
+    .section, .summary {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 15px rgba(35, 67, 110, 0.07);
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #245ca8;
+      border-bottom: 2px solid #dce8f7;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      color: #64748b;
+      font-size: 14px;
+      margin: 0 0 18px;
+    }
+
+    .question {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 120px;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #edf1f6;
+    }
+
+    .question:last-child {
+      border-bottom: none;
+    }
+
+    .question label {
+      font-weight: 500;
+    }
+
+    .question input {
+      width: 100%;
+      min-width: 0;
+      padding: 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      font-size: 17px;
+      text-align: center;
+      background: white;
+    }
+
+    .question input:focus {
+      outline: 2px solid #8db9f0;
+      border-color: #347fd3;
+    }
+
+    .question input.invalid {
+      border: 2px solid #dc2626;
+      background: #fff5f5;
+    }
+
+    .warning {
+      grid-column: 1 / -1;
+      color: #c62828;
+      font-size: 13px;
+      margin-top: -10px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      background: #edf5ff;
+      padding: 16px;
+      margin-top: 18px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+
+    .total-score {
+      font-size: 23px;
+      color: #245ca8;
+      white-space: nowrap;
+    }
+
+    .summary h2 {
+      text-align: center;
+      color: #245ca8;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #d8e1ed;
+      padding: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: #e7f0fc;
+      color: #214e91;
+    }
+
+    td.score {
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      width: 130px;
+    }
+
+    .grand-total td {
+      background: #e1f5eb;
+      font-weight: bold;
+      color: #146c43;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 24px 0;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 13px 22px;
+      font-size: 16px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .print-btn {
+      background: #245ca8;
+      color: white;
+    }
+
+    .reset-btn {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .home-btn {
+      background: #159477;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 13px 22px;
+      display: inline-block;
+    }
+
+    button:hover, .home-btn:hover {
+      opacity: 0.85;
+    }
+
+    footer {
+      text-align: center;
+      color: #718096;
+      font-size: 13px;
+      padding: 10px;
+    }
+
+    @media (max-width: 550px) {
+      body {
+        padding: 10px;
+      }
+
+      header h1 {
+        font-size: 22px;
+      }
+
+      .section, .summary {
+        padding: 16px;
+      }
+
+      .section-title {
+        font-size: 19px;
+      }
+
+      .question {
+        grid-template-columns: minmax(0, 1fr) 85px;
+        gap: 10px;
+      }
+
+      th, td {
+        padding: 9px;
+        font-size: 14px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .container {
+        max-width: none;
+      }
+
+      header, .section, .summary {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+      }
+
+      .buttons, footer {
+        display: none;
+      }
+
+      .question input {
+        border: 1px solid #aaa;
+        color: black;
+      }
+
+      .warning {
+        display: none;
+      }
+
+      .section, .summary {
+        margin-bottom: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <header>
+    <h1>โปรแกรมช่วยคำนวณคะแนนของครูผู้ช่วย</h1>
+    <p>กรอกคะแนนแต่ละข้อเพื่อคำนวณคะแนนประเมินตนเอง</p>
+  </header>
+
+  <!-- องค์ประกอบที่ 1 -->
+  <section class="section">
+    <div class="section-title">องค์ประกอบที่ 1</div>
+    <p class="description">
+      กรอกคะแนนแต่ละข้อได้ตั้งแต่ 1–4 คะแนน รวม 14 ข้อ
+      คะแนนสรุป = ผลรวมคะแนน × 80 ÷ 56
+    </p>
+
+    <div id="part1Questions"></div>
+
+    <div class="total-row">
+      <span>คะแนนรวมองค์ประกอบที่ 1 (เต็ม 80 คะแนน)</span>
+      <span class="total-score" id="part1Total">0.00</span>
+    </div>
+  </section>
+
+  <!-- องค์ประกอบที่ 2 -->
+  <section class="section">
+    <div class="section-title">องค์ประกอบที่ 2</div>
+    <p class="description">
+      กรอกคะแนนได้ตั้งแต่ 1–5 คะแนน
+      คะแนนสรุป = คะแนนที่กรอก × 2
+    </p>
+
+    <div class="question">
+      <label for="part2">คะแนนประเมินองค์ประกอบที่ 2 (1–5)</label>
+      <input
+        type="number"
+        id="part2"
+        min="1"
+        max="5"
+        step="1"
+        placeholder="1–5"
+        oninput="calculatePart2()"
+      >
+      <div class="warning" id="part2Warning" hidden></div>
+    </div>
+
+    <div class="total-row">
+      <span>คะแนนสรุปองค์ประกอบที่ 2 (เต็ม 10 คะแนน)</span>
+      <span class="total-score" id="part2Total">0.00</span>
+    </div>
+  </section>
+
+  <!-- องค์ประกอบที่ 3 -->
+  <section class="section">
+    <div class="section-title">องค์ประกอบที่ 3</div>
+    <p class="description">
+      กรอกคะแนนแต่ละข้อได้ตั้งแต่ 1–4 คะแนน รวม 10 ข้อ
+      คะแนนสรุป = ผลรวมคะแนน ÷ 4
+    </p>
+
+    <div id="part3Questions"></div>
+
+    <div class="total-row">
+      <span>คะแนนรวมองค์ประกอบที่ 3 (เต็ม 10 คะแนน)</span>
+      <span class="total-score" id="part3Total">0.00</span>
+    </div>
+  </section>
+
+  <!-- ตารางสรุปคะแนน -->
+  <section class="summary">
+    <h2>ตารางสรุปคะแนน</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>รายการ</th>
+          <th style="text-align:center">คะแนนที่ได้</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>องค์ประกอบที่ 1 ได้คะแนน</td>
+          <td class="score" id="summary1">0.00</td>
+        </tr>
+        <tr>
+          <td>องค์ประกอบที่ 2 ได้คะแนน</td>
+          <td class="score" id="summary2">0.00</td>
+        </tr>
+        <tr>
+          <td>องค์ประกอบที่ 3 ได้คะแนน</td>
+          <td class="score" id="summary3">0.00</td>
+        </tr>
+        <tr class="grand-total">
+          <td>คะแนนรวมทั้งหมด (เต็ม 100 คะแนน)</td>
+          <td class="score" id="grandTotal">0.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="buttons">
+    <button class="print-btn" onclick="window.print()">
+      พิมพ์ / บันทึกเป็น PDF
+    </button>
+
+    <button class="reset-btn" onclick="resetAll()">
+      ล้างคะแนนทั้งหมด
+    </button>
+
+    <a class="home-btn" href="index.html">กลับหน้าแรก</a>
+  </div>
+
+  <footer>
+    โปรแกรมช่วยคำนวณคะแนนประเมินตนเองของครูผู้ช่วย
+  </footer>
+</div>
+
+<script>
+  // สร้างช่องคะแนนขององค์ประกอบที่ 1
+  // ข้อ 1.1–1.7, 2.1–2.4 และ 3.1–3.3
+  const part1Labels = [
+    "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7",
+    "2.1", "2.2", "2.3", "2.4",
+    "3.1", "3.2", "3.3"
+  ];
+
+  // สร้างช่องคะแนนขององค์ประกอบที่ 3 จำนวน 10 ข้อ
+  const part3Labels = [
+    "ข้อ 1", "ข้อ 2", "ข้อ 3", "ข้อ 4", "ข้อ 5",
+    "ข้อ 6", "ข้อ 7", "ข้อ 8", "ข้อ 9", "ข้อ 10"
+  ];
+
+  function createQuestions(containerId, labels, prefix, maxScore) {
+    const container = document.getElementById(containerId);
+
+    labels.forEach((label, index) => {
+      const row = document.createElement("div");
+      row.className = "question";
+
+      const questionLabel = document.createElement("label");
+      questionLabel.htmlFor = prefix + index;
+      questionLabel.textContent = label;
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.id = prefix + index;
+      input.min = "1";
+      input.max = String(maxScore);
+      input.step = "1";
+      input.placeholder = "1–" + maxScore;
+      input.setAttribute("aria-label", label);
+
+      const warning = document.createElement("div");
+      warning.className = "warning";
+      warning.id = prefix + "Warning" + index;
+      warning.hidden = true;
+
+      input.addEventListener("input", () => {
+        validateInput(input, warning, maxScore);
+
+        if (prefix === "p1_") {
+          calculatePart1();
+        } else {
+          calculatePart3();
+        }
+      });
+
+      row.appendChild(questionLabel);
+      row.appendChild(input);
+      row.appendChild(warning);
+      container.appendChild(row);
+    });
+  }
+
+  function validateInput(input, warning, maxScore) {
+    const raw = input.value.trim();
+    const value = Number(raw);
+
+    let message = "";
+
+    if (raw !== "") {
+      if (!Number.isFinite(value) || !Number.isInteger(value)) {
+        message = "กรุณากรอกเป็นจำนวนเต็มเท่านั้น";
+      } else if (value < 1 || value > maxScore) {
+        message = "กรอกเกินช่วงที่กำหนด กรุณากรอกคะแนน 1–" + maxScore;
+      }
+    }
+
+    warning.textContent = message;
+    warning.hidden = message === "";
+    input.classList.toggle("invalid", message !== "");
+
+    return raw !== "" && message === "";
+  }
+
+  function getValidValue(input, maxScore) {
+    const raw = input.value.trim();
+    const value = Number(raw);
+
+    if (
+      raw === "" ||
+      !Number.isFinite(value) ||
+      !Number.isInteger(value) ||
+      value < 1 ||
+      value > maxScore
+    ) {
+      return 0;
+    }
+
+    return value;
+  }
+
+  function formatScore(value) {
+    return value.toFixed(2);
+  }
+
+  function calculatePart1() {
+    let sum = 0;
+
+    part1Labels.forEach((_, index) => {
+      const input = document.getElementById("p1_" + index);
+      sum += getValidValue(input, 4);
+    });
+
+    const score = sum * 80 / 56;
+
+    document.getElementById("part1Total").textContent =
+      formatScore(score);
+
+    updateSummary();
+  }
+
+  function calculatePart2() {
+    const input = document.getElementById("part2");
+    const warning = document.getElementById("part2Warning");
+
+    validateInput(input, warning, 5);
+
+    const score = getValidValue(input, 5) * 2;
+
+    document.getElementById("part2Total").textContent =
+      formatScore(score);
+
+    updateSummary();
+  }
+
+  function calculatePart3() {
+    let sum = 0;
+
+    part3Labels.forEach((_, index) => {
+      const input = document.getElementById("p3_" + index);
+      sum += getValidValue(input, 4);
+    });
+
+    const score = sum / 4;
+
+    document.getElementById("part3Total").textContent =
+      formatScore(score);
+
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const score1 = Number(
+      document.getElementById("part1Total").textContent
+    );
+    const score2 = Number(
+      document.getElementById("part2Total").textContent
+    );
+    const score3 = Number(
+      document.getElementById("part3Total").textContent
+    );
+
+    document.getElementById("summary1").textContent =
+      formatScore(score1);
+
+    document.getElementById("summary2").textContent =
+      formatScore(score2);
+
+    document.getElementById("summary3").textContent =
+      formatScore(score3);
+
+    document.getElementById("grandTotal").textContent =
+      formatScore(score1 + score2 + score3);
+  }
+
+  function resetAll() {
+    const confirmed = confirm(
+      "ต้องการล้างคะแนนทั้งหมดใช่หรือไม่?"
+    );
+
+    if (!confirmed) return;
+
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+      input.value = "";
+      input.classList.remove("invalid");
+    });
+
+    document.querySelectorAll(".warning").forEach(warning => {
+      warning.textContent = "";
+      warning.hidden = true;
+    });
+
+    calculatePart1();
+    calculatePart2();
+    calculatePart3();
+  }
+
+  createQuestions("part1Questions", part1Labels, "p1_", 4);
+  createQuestions("part3Questions", part3Labels, "p3_", 4);
+
+  calculatePart1();
+  calculatePart2();
+  calculatePart3();
+</script>
+</body>
+</html>
