@@ -1,2105 +1,552 @@
+
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>
-โปรแกรมช่วยคำนวณคะแนนของครูวิทยฐานชำนาญการพิเศษ
-</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โปรแกรมช่วยคำนวณคะแนนของครู-ครูเชี่ยวชาญ</title>
 
 <style>
-
-/* =========================================
-   ตั้งค่าพื้นฐาน
-========================================= */
-
-* {
-    box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 
 body {
-
-    margin: 0;
-
-    font-family:
-        "Tahoma",
-        "Arial",
-        sans-serif;
-
-    background: #f4f6f8;
-
-    color: #333;
-
-    line-height: 1.6;
+  margin: 0;
+  padding: 20px;
+  font-family: Tahoma, sans-serif;
+  background: #f1f5fb;
+  color: #26374a;
+  line-height: 1.6;
 }
 
+.container { max-width: 1000px; margin: auto; }
 
-.container {
-
-    max-width: 1100px;
-
-    margin: 30px auto;
-
-    padding: 15px;
+header {
+  background: linear-gradient(135deg, #245ca8, #347fd3);
+  color: white;
+  text-align: center;
+  padding: 30px 20px;
+  border-radius: 18px;
+  margin-bottom: 22px;
 }
 
+header h1 { font-size: 27px; margin: 0 0 8px; }
 
-/* =========================================
-   ส่วนหัว
-========================================= */
-
-.header {
-
-    background: #1f4e79;
-
-    color: white;
-
-    padding: 25px;
-
-    border-radius: 12px;
-
-    text-align: center;
-
-    margin-bottom: 20px;
+.section, .summary {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 15px rgba(35,67,110,.07);
 }
-
-
-.header h1 {
-
-    margin: 0;
-
-    font-size: 28px;
-}
-
-
-.header p {
-
-    margin: 8px 0 0;
-
-    opacity: 0.9;
-}
-
-
-/* =========================================
-   กล่องแต่ละตอน
-========================================= */
-
-.section {
-
-    background: white;
-
-    border-radius: 12px;
-
-    padding: 25px;
-
-    margin-bottom: 20px;
-
-    box-shadow:
-        0 2px 10px rgba(0,0,0,0.08);
-}
-
 
 .section-title {
-
-    background: #eaf2f8;
-
-    color: #1f4e79;
-
-    padding: 12px 15px;
-
-    border-left: 5px solid #1f4e79;
-
-    font-size: 21px;
-
-    font-weight: bold;
-
-    margin-bottom: 20px;
-
-    border-radius: 5px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #245ca8;
+  border-bottom: 2px solid #dce8f7;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 
-
-/* =========================================
-   คำแนะนำ
-========================================= */
-
-.instruction {
-
-    background: #fff8e1;
-
-    border: 1px solid #ffe082;
-
-    padding: 12px;
-
-    border-radius: 6px;
-
-    margin-bottom: 20px;
+.sub-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 22px 0 8px;
+  color: #334e68;
 }
 
-
-/* =========================================
-   ตารางกรอกคะแนน
-========================================= */
-
-.score-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, 1fr);
-
-    gap: 15px;
+.description {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0 0 18px;
 }
 
-
-.score-item {
-
-    border: 1px solid #ddd;
-
-    padding: 12px;
-
-    border-radius: 8px;
-
-    background: #fafafa;
+.question {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf1f6;
 }
 
-
-.score-item label {
-
-    display: block;
-
-    font-weight: bold;
-
-    margin-bottom: 7px;
+.question input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  font-size: 17px;
+  text-align: center;
 }
 
-
-/* =========================================
-   ช่องกรอกคะแนน
-========================================= */
-
-input[type="number"] {
-
-    width: 100%;
-
-    padding: 10px;
-
-    border: 1px solid #bbb;
-
-    border-radius: 6px;
-
-    font-size: 16px;
+.question input.invalid {
+  border: 2px solid #dc2626;
+  background: #fff5f5;
 }
 
-
-input[type="number"]:focus {
-
-    outline: none;
-
-    border-color: #1f4e79;
+.warning {
+  grid-column: 1 / -1;
+  color: #c62828;
+  font-size: 13px;
+  margin-top: -10px;
 }
 
-
-/* ช่องที่กรอกผิด */
-
-.invalid {
-
-    border: 2px solid #d32f2f !important;
-
-    background: #ffebee;
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #edf5ff;
+  padding: 16px;
+  margin-top: 18px;
+  border-radius: 12px;
+  font-weight: bold;
 }
 
-
-/* =========================================
-   ข้อความแจ้งเตือน
-========================================= */
-
-.error {
-
-    color: #d32f2f;
-
-    font-size: 13px;
-
-    margin-top: 5px;
-
-    min-height: 20px;
+.total-score {
+  font-size: 23px;
+  color: #245ca8;
+  white-space: nowrap;
 }
 
+table { width: 100%; border-collapse: collapse; }
 
-/* =========================================
-   กล่องสรุปคะแนน
-========================================= */
-
-.summary {
-
-    margin-top: 20px;
-
-    padding: 18px;
-
-    background: #e8f5e9;
-
-    border: 1px solid #a5d6a7;
-
-    border-radius: 8px;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
+th, td {
+  border: 1px solid #d8e1ed;
+  padding: 13px;
+  text-align: left;
 }
 
+th { background: #e7f0fc; color: #214e91; }
 
-.summary-title {
-
-    font-weight: bold;
-
-    font-size: 18px;
+td.score {
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  width: 150px;
 }
 
-
-.summary-value {
-
-    font-size: 28px;
-
-    font-weight: bold;
-
-    color: #2e7d32;
+.grand-total td {
+  background: #e1f5eb;
+  font-weight: bold;
+  color: #146c43;
 }
 
-
-/* =========================================
-   ตอนที่ 2
-========================================= */
-
-.part2-grid {
-
-    display: grid;
-
-    grid-template-columns: 1fr;
-
-    gap: 15px;
+.summary h2 {
+  text-align: center;
+  color: #245ca8;
+  margin-top: 0;
 }
-
-
-.part2-item {
-
-    border: 1px solid #ddd;
-
-    border-radius: 8px;
-
-    padding: 18px;
-
-    background: #fafafa;
-}
-
-
-.part2-item h3 {
-
-    margin-top: 0;
-
-    color: #1f4e79;
-}
-
-
-.conversion {
-
-    color: #555;
-
-    font-size: 14px;
-
-    margin-top: 8px;
-}
-
-
-.result-box {
-
-    margin-top: 12px;
-
-    padding: 10px;
-
-    background: white;
-
-    border-radius: 6px;
-
-    border: 1px solid #ddd;
-}
-
-
-/* =========================================
-   กล่องแสดงสูตร
-========================================= */
-
-.total-section {
-
-    margin-top: 20px;
-
-    padding: 20px;
-
-    background: #e3f2fd;
-
-    border: 1px solid #90caf9;
-
-    border-radius: 8px;
-}
-
-
-.total-section p {
-
-    margin: 7px 0;
-}
-
-
-/* =========================================
-   ตารางสรุปคะแนนใหม่
-========================================= */
-
-.final-summary {
-
-    margin-top: 25px;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    border: 1px solid #ccc;
-
-    background: white;
-}
-
-
-.final-summary-title {
-
-    background: #1f4e79;
-
-    color: white;
-
-    padding: 16px;
-
-    text-align: center;
-
-    font-size: 24px;
-
-    font-weight: bold;
-}
-
-
-.summary-table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-}
-
-
-.summary-table th,
-.summary-table td {
-
-    border: 1px solid #ddd;
-
-    padding: 15px;
-
-}
-
-
-.summary-table th {
-
-    background: #eaf2f8;
-
-    color: #1f4e79;
-
-    text-align: center;
-
-    font-size: 17px;
-}
-
-
-.summary-table td:first-child {
-
-    font-weight: bold;
-}
-
-
-.summary-table td:last-child {
-
-    text-align: center;
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-    color: #2e7d32;
-}
-
-
-.summary-table .grand-total td {
-
-    background: #1f4e79;
-
-    color: white;
-
-    font-size: 22px;
-
-    font-weight: bold;
-}
-
-
-/* =========================================
-   คะแนนรวมเดิม
-========================================= */
-
-.final-result {
-
-    margin-top: 15px;
-
-    padding: 20px;
-
-    background: #1f4e79;
-
-    color: white;
-
-    border-radius: 8px;
-
-    text-align: center;
-}
-
-
-.final-result .value {
-
-    font-size: 36px;
-
-    font-weight: bold;
-}
-
-
-/* =========================================
-   ปุ่ม
-========================================= */
 
 .buttons {
-
-    display: flex;
-
-    justify-content: center;
-
-    gap: 15px;
-
-    margin: 25px 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 24px 0;
 }
 
-
-button {
-
-    border: none;
-
-    padding: 13px 25px;
-
-    border-radius: 7px;
-
-    font-size: 16px;
-
-    cursor: pointer;
+button, .home-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 13px 22px;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
 }
 
+.print-btn { background: #245ca8; color: white; }
+.reset-btn { background: #e2e8f0; color: #334155; }
 
-.btn-reset {
-
-    background: #757575;
-
-    color: white;
+.home-btn {
+  background: #159477;
+  color: white;
+  text-decoration: none;
 }
 
-
-.btn-print {
-
-    background: #1f4e79;
-
-    color: white;
+footer {
+  text-align: center;
+  color: #718096;
+  font-size: 13px;
+  padding: 10px;
 }
 
-
-button:hover {
-
-    opacity: 0.85;
+@media (max-width: 550px) {
+  body { padding: 10px; }
+  header h1 { font-size: 22px; }
+  .section, .summary { padding: 16px; }
+  .section-title { font-size: 19px; }
+  .question { grid-template-columns: minmax(0,1fr) 85px; gap: 10px; }
+  th, td { padding: 9px; font-size: 14px; }
 }
-
-
-/* =========================================
-   Footer
-========================================= */
-
-.footer {
-
-    text-align: center;
-
-    color: #777;
-
-    margin-top: 20px;
-
-    font-size: 14px;
-}
-
-
-/* =========================================
-   รองรับมือถือ
-========================================= */
-
-@media (max-width: 800px) {
-
-    .score-grid {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-
-    .header h1 {
-
-        font-size: 22px;
-    }
-}
-
-
-@media (max-width: 500px) {
-
-    .score-grid {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    .section {
-
-        padding: 15px;
-    }
-
-
-    .summary-table th,
-    .summary-table td {
-
-        padding: 10px;
-
-        font-size: 14px;
-    }
-
-}
-
-
-/* =========================================
-   สำหรับพิมพ์
-========================================= */
 
 @media print {
-
-    body {
-
-        background: white;
-    }
-
-
-    .buttons {
-
-        display: none;
-    }
-
-
-    .section {
-
-        box-shadow: none;
-
-        border: 1px solid #ddd;
-    }
-
+  body { background: white; padding: 0; }
+  .container { max-width: none; }
+  header, .section, .summary { box-shadow: none; border: 1px solid #ddd; }
+  .buttons, footer, .warning { display: none !important; }
+  .section, .summary { break-inside: avoid; margin-bottom: 12px; }
+  .question input { border: 1px solid #aaa; }
 }
-
 </style>
-
 </head>
 
-
 <body>
-
-
 <div class="container">
 
-
-<!-- =========================================
-     HEADER
-========================================= -->
-
-<div class="header">
-
-    <h1>
-        โปรแกรมช่วยคำนวณคะแนนของครูวิทยฐานชำนาญการพิเศษ
-    </h1>
-
-    <p>
-        โปรแกรมสำหรับคำนวณคะแนนประเมินตนเอง
-    </p>
-
-</div>
-
-
-
-<!-- =========================================
-     ตอนที่ 1
-========================================= -->
-
-<div class="section">
-
-    <div class="section-title">
-        แบบสอบถามช่วงที่ 1
-    </div>
-
-
-    <div class="instruction">
-
-        กรุณากรอกคะแนนทั้ง 15 ข้อ
-        โดยสามารถกรอกคะแนนได้ตั้งแต่
-
-        <strong>1 - 4 คะแนน</strong>
-
-    </div>
-
-
-    <div
-        class="score-grid"
-        id="part1Grid">
-    </div>
-
-
-    <div class="summary">
-
-        <div class="summary-title">
-            รวมคะแนนแบบสอบถามช่วงที่ 1
-        </div>
-
-        <div
-            class="summary-value"
-            id="part1Total">
-            0
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =========================================
-     ตอนที่ 2
-========================================= -->
-
-<div class="section">
-
-    <div class="section-title">
-        แบบสอบถามช่วงที่ 2
-    </div>
-
-
-    <div class="instruction">
-
-        กรุณากรอกคะแนนแต่ละข้อในช่วง
-
-        <strong>1 - 4 คะแนน</strong>
-
-        โปรแกรมจะเปลี่ยนคะแนนเป็นคะแนนที่กำหนดให้อัตโนมัติ
-
-    </div>
-
-
-    <div class="part2-grid">
-
-
-        <!-- 2.1 -->
-
-        <div class="part2-item">
-
-            <h3>
-                ข้อ 1
-            </h3>
-
-
-            <label>
-                คะแนนที่กรอก
-            </label>
-
-
-            <input
-                type="number"
-                id="part21"
-                min="1"
-                max="4"
-                step="1"
-                placeholder="กรอก 1 - 4"
-                oninput="calculatePart2()"
-            >
-
-
-            <div class="conversion">
-
-                4 = 20 คะแนน |
-                3 = 15 คะแนน |
-                2 = 10 คะแนน |
-                1 = 5 คะแนน
-
-            </div>
-
-
-            <div class="result-box">
-
-                คะแนนที่แปลงแล้ว:
-
-                <strong id="part21Result">
-                    0
-                </strong>
-
-                คะแนน
-
-            </div>
-
-
-            <div
-                class="error"
-                id="error21">
-            </div>
-
-        </div>
-
-
-
-        <!-- 2.2 -->
-
-        <div class="part2-item">
-
-            <h3>
-                ข้อ 2
-            </h3>
-
-
-            <label>
-                คะแนนที่กรอก
-            </label>
-
-
-            <input
-                type="number"
-                id="part22"
-                min="1"
-                max="4"
-                step="1"
-                placeholder="กรอก 1 - 4"
-                oninput="calculatePart2()"
-            >
-
-
-            <div class="conversion">
-
-                4 = 10 คะแนน |
-                3 = 7.5 คะแนน |
-                2 = 5 คะแนน |
-                1 = 2.50 คะแนน
-
-            </div>
-
-
-            <div class="result-box">
-
-                คะแนนที่แปลงแล้ว:
-
-                <strong id="part22Result">
-                    0
-                </strong>
-
-                คะแนน
-
-            </div>
-
-
-            <div
-                class="error"
-                id="error22">
-            </div>
-
-        </div>
-
-
-
-        <!-- 2.3 -->
-
-        <div class="part2-item">
-
-            <h3>
-                ข้อ 3
-            </h3>
-
-
-            <label>
-                คะแนนที่กรอก
-            </label>
-
-
-            <input
-                type="number"
-                id="part23"
-                min="1"
-                max="4"
-                step="1"
-                placeholder="กรอก 1 - 4"
-                oninput="calculatePart2()"
-            >
-
-
-            <div class="conversion">
-
-                4 = 10 คะแนน |
-                3 = 7.5 คะแนน |
-                2 = 5 คะแนน |
-                1 = 2.50 คะแนน
-
-            </div>
-
-
-            <div class="result-box">
-
-                คะแนนที่แปลงแล้ว:
-
-                <strong id="part23Result">
-                    0
-                </strong>
-
-                คะแนน
-
-            </div>
-
-
-            <div
-                class="error"
-                id="error23">
-            </div>
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="total-section">
-
-        <p>
-
-            คะแนนรวมข้อ 1 + 2 + 3 =
-
-            <strong id="part2RawTotal">
-                0
-            </strong>
-
-        </p>
-
-
-        <p>
-
-            คะแนนที่ได้ × 20 ÷ 40 =
-
-            <strong id="part2Calculation">
-                0
-            </strong>
-
-        </p>
-
-    </div>
-
-
-
-    <div class="summary">
-
-        <div class="summary-title">
-            รวมคะแนนแบบสอบถามช่วงที่ 2
-        </div>
-
-
-        <div
-            class="summary-value"
-            id="part2Total">
-
-            0
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =========================================
-     ตอนที่ 3
-========================================= -->
-
-<div class="section">
-
-    <div class="section-title">
-        แบบสอบถามช่วงที่ 3
-    </div>
-
-
-    <div class="instruction">
-
-        กรุณากรอกคะแนนตั้งแต่
-
-        <strong>1 - 5 คะแนน</strong>
-
-    </div>
-
-
-    <label>
-        คะแนนแบบสอบถามช่วงที่ 3
-    </label>
-
-
-    <input
-        type="number"
-        id="part3"
-        min="1"
-        max="5"
-        step="1"
-        placeholder="กรอก 1 - 5"
-        oninput="calculatePart3()"
-    >
-
-
-    <div
-        class="error"
-        id="error3">
-    </div>
-
-
-    <div class="summary">
-
-        <div class="summary-title">
-            คะแนนแบบสอบถามช่วงที่ 3
-        </div>
-
-
-        <div
-            class="summary-value"
-            id="part3Total">
-
-            0
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =========================================
-     ตอนที่ 4
-========================================= -->
-
-<div class="section">
-
-    <div class="section-title">
-        แบบสอบถามช่วงที่ 4
-    </div>
-
-
-    <div class="instruction">
-
-        กรุณากรอกคะแนนทั้ง 10 ข้อ
-        โดยสามารถกรอกคะแนนได้ตั้งแต่
-
-        <strong>1 - 4 คะแนน</strong>
-
-    </div>
-
-
-    <div
-        class="score-grid"
-        id="part4Grid">
-    </div>
-
-
-    <div class="summary">
-
-        <div class="summary-title">
-            รวมคะแนนแบบสอบถามช่วงที่ 4
-        </div>
-
-
-        <div
-            class="summary-value"
-            id="part4Total">
-
-            0
-
-        </div>
-
-    </div>
-
-
-    <div class="total-section">
-
-        <p>
-
-            คะแนนรวม 10 ข้อ =
-
-            <strong id="part4RawTotal">
-                0
-            </strong>
-
-        </p>
-
-
-        <p>
-
-            คะแนนรวม ÷ 4 =
-
-            <strong id="part4Calculation">
-                0
-            </strong>
-
-        </p>
-
-    </div>
-
-</div>
-
-
-
-<!-- =========================================
-     ตารางสรุปคะแนน
-========================================= -->
-
-<div class="section">
-
-
-    <div class="final-summary">
-
-        <div class="final-summary-title">
-
-            ตารางสรุปคะแนน
-
-        </div>
-
-
-        <table class="summary-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>
-                        องค์ประกอบ
-                    </th>
-
-                    <th>
-                        วิธีคำนวณ
-                    </th>
-
-                    <th>
-                        คะแนน
-                    </th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody>
-
-
-                <!-- องค์ประกอบ 1 -->
-
-                <tr>
-
-                    <td>
-                        องค์ประกอบที่ 1
-                    </td>
-
-                    <td>
-                        แบบสอบถามช่วงที่  1 + แบบสอบถามช่วงที่ 2
-                    </td>
-
-                    <td
-                        id="component1">
-                        0.00
-                    </td>
-
-                </tr>
-
-
-                <!-- องค์ประกอบ 2 -->
-
-                <tr>
-
-                    <td>
-                        องค์ประกอบที่ 2
-                    </td>
-
-                    <td>
-                        แบบสอบถามช่วงที่ 3
-                    </td>
-
-                    <td
-                        id="component2">
-                        0.00
-                    </td>
-
-                </tr>
-
-
-                <!-- องค์ประกอบ 3 -->
-
-                <tr>
-
-                    <td>
-                        องค์ประกอบที่ 3
-                    </td>
-
-                    <td>
-                        แบบสอบถามช่วงที่ 4
-                    </td>
-
-                    <td
-                        id="component3">
-                        0.00
-                    </td>
-
-                </tr>
-
-
-                <!-- คะแนนรวม -->
-
-                <tr class="grand-total">
-
-                    <td colspan="2">
-
-                        คะแนนรวมทั้งหมด 100
-
-                    </td>
-
-                    <td id="grandTotal">
-
-                        0.00
-
-                    </td>
-
-                </tr>
-
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-
-</div>
-
-
-
-<!-- =========================================
-     ปุ่ม
-========================================= -->
+<header>
+  <h1>โปรแกรมช่วยคำนวณคะแนนของครู-ครูเชี่ยวชาญ</h1>
+  <p>กรอกคะแนนแต่ละข้อเพื่อคำนวณคะแนนประเมินตนเอง</p>
+</header>
+
+<!-- องค์ประกอบที่ 1 -->
+<section class="section">
+  <div class="section-title">องค์ประกอบที่ 1</div>
+
+  <div class="sub-title">ตอนที่ 1</div>
+  <p class="description">
+    กรอกคะแนนแต่ละข้อได้ตั้งแต่ 1–4 คะแนน จำนวน 15 ข้อ
+    คะแนนตอนที่ 1 คือผลรวมคะแนนทุกข้อ
+  </p>
+
+  <div id="part1Questions"></div>
+
+  <div class="total-row">
+    <span>รวมคะแนนตอนที่ 1 (เต็ม 60 คะแนน)</span>
+    <span class="total-score" id="part1Total">0.00</span>
+  </div>
+
+  <div class="sub-title">ตอนที่ 2</div>
+  <p class="description">
+    กรอกคะแนน 1–4 ในแต่ละข้อ ระบบจะแปลงคะแนนตามเกณฑ์
+    แล้วคำนวณคะแนนสรุปด้วยสูตร (ผลรวมคะแนนที่แปลงแล้ว × 20) ÷ 40
+  </p>
+
+  <div id="part2Questions"></div>
+
+  <div class="total-row">
+    <span>รวมคะแนนตอนที่ 2 (เต็ม 20 คะแนน)</span>
+    <span class="total-score" id="part2Total">0.00</span>
+  </div>
+
+  <div class="sub-title">ตารางสรุปคะแนนรวมแบบประเมินองค์ประกอบที่ 1</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>รายการ</th>
+        <th style="text-align:center">คะแนนที่ได้</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ตอนที่ 1</td>
+        <td class="score" id="element1Part1">0.00</td>
+      </tr>
+      <tr>
+        <td>ตอนที่ 2</td>
+        <td class="score" id="element1Part2">0.00</td>
+      </tr>
+      <tr class="grand-total">
+        <td>คะแนนรวมองค์ประกอบที่ 1</td>
+        <td class="score" id="element1Total">0.00</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- องค์ประกอบที่ 2 -->
+<section class="section">
+  <div class="section-title">องค์ประกอบที่ 2</div>
+  <p class="description">
+    กรอกคะแนนได้ตั้งแต่ 1–5 คะแนน
+    คะแนนสรุป = คะแนนที่กรอก × 2 (เต็ม 10 คะแนน)
+  </p>
+
+  <div class="question">
+    <label for="part3">คะแนนประเมินองค์ประกอบที่ 2 (1–5)</label>
+    <input type="number" id="part3" min="1" max="5"
+      step="1" placeholder="1–5" oninput="calculatePart3()">
+    <div class="warning" id="part3Warning" hidden></div>
+  </div>
+
+  <div class="total-row">
+    <span>คะแนนรวมองค์ประกอบที่ 2 (เต็ม 10 คะแนน)</span>
+    <span class="total-score" id="part3Total">0.00</span>
+  </div>
+</section>
+
+<!-- องค์ประกอบที่ 3 -->
+<section class="section">
+  <div class="section-title">องค์ประกอบที่ 3</div>
+  <p class="description">
+    กรอกคะแนนแต่ละข้อได้ตั้งแต่ 1–4 คะแนน จำนวน 10 ข้อ
+    คะแนนสรุป = ผลรวมคะแนนทั้งหมด ÷ 4 (เต็ม 10 คะแนน)
+  </p>
+
+  <div id="part4Questions"></div>
+
+  <div class="total-row">
+    <span>คะแนนรวมองค์ประกอบที่ 3 (เต็ม 10 คะแนน)</span>
+    <span class="total-score" id="part4Total">0.00</span>
+  </div>
+</section>
+
+<!-- ตารางสรุปคะแนน -->
+<section class="summary">
+  <h2>ตารางสรุปคะแนน</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>รายการ</th>
+        <th style="text-align:center">คะแนนที่ได้</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>องค์ประกอบที่ 1 ได้คะแนน</td>
+        <td class="score" id="summary1">0.00</td>
+      </tr>
+      <tr>
+        <td>องค์ประกอบที่ 2 ได้คะแนน</td>
+        <td class="score" id="summary2">0.00</td>
+      </tr>
+      <tr>
+        <td>องค์ประกอบที่ 3 ได้คะแนน</td>
+        <td class="score" id="summary3">0.00</td>
+      </tr>
+      <tr class="grand-total">
+        <td>คะแนนรวมทั้งหมด (เต็ม 100 คะแนน)</td>
+        <td class="score" id="grandTotal">0.00</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
 
 <div class="buttons">
-
-
-    <button
-        class="btn-reset"
-        onclick="resetAll()">
-
-        ล้างข้อมูลทั้งหมด
-
-    </button>
-
-
-    <button
-        class="btn-print"
-        onclick="window.print()">
-
-        พิมพ์ / บันทึก PDF
-
-    </button>
-
-
+  <button class="print-btn" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+  <button class="reset-btn" onclick="resetAll()">ล้างคะแนนทั้งหมด</button>
+  <a class="home-btn" href="index.html">กลับหน้าแรก</a>
 </div>
 
-
-
-<div class="footer">
-
-    โปรแกรมช่วยคำนวณคะแนนของครูวิทยฐานชำนาญการพิเศษ
-
+<footer>โปรแกรมช่วยคำนวณคะแนนประเมินตนเองของครู-ครูเชี่ยวชาญ</footer>
 </div>
-
-
-</div>
-
-
 
 <script>
+// ตอนที่ 1: 15 ข้อ
+const part1Labels = [
+  "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8",
+  "2.1", "2.2", "2.3", "2.4",
+  "3.1", "3.2", "3.3"
+];
 
+// ตอนที่ 2: คะแนนที่กรอกแปลงเป็นคะแนนตามเกณฑ์
+const part2Labels = [
+  { label: "ข้อ 2.1", values: {1: 5, 2: 10, 3: 15, 4: 20} },
+  { label: "ข้อ 2.2", values: {1: 2.5, 2: 5, 3: 7.5, 4: 10} },
+  { label: "ข้อ 2.3", values: {1: 2.5, 2: 5, 3: 7.5, 4: 10} }
+];
 
-/* =====================================================
-   สร้างช่องคะแนน ตอนที่ 1
-===================================================== */
+// องค์ประกอบที่ 3: 10 ข้อ
+const part4Labels = [
+  "ข้อ 1", "ข้อ 2", "ข้อ 3", "ข้อ 4", "ข้อ 5",
+  "ข้อ 6", "ข้อ 7", "ข้อ 8", "ข้อ 9", "ข้อ 10"
+];
 
-function createPart1Inputs() {
+function createQuestions(containerId, labels, prefix, maxScore, calculator) {
+  const container = document.getElementById(containerId);
 
-    const grid =
-        document.getElementById("part1Grid");
+  labels.forEach((item, index) => {
+    const labelText = typeof item === "string" ? item : item.label;
+    const row = document.createElement("div");
+    row.className = "question";
 
+    const label = document.createElement("label");
+    label.htmlFor = prefix + index;
+    label.textContent = labelText;
 
-    for (
-        let i = 1;
-        i <= 15;
-        i++
-    ) {
+    const input = document.createElement("input");
+    input.type = "number";
+    input.id = prefix + index;
+    input.min = "1";
+    input.max = String(maxScore);
+    input.step = "1";
+    input.placeholder = "1–" + maxScore;
+    input.setAttribute("aria-label", labelText);
 
-        const item =
-            document.createElement("div");
+    const warning = document.createElement("div");
+    warning.className = "warning";
+    warning.id = prefix + "Warning" + index;
+    warning.hidden = true;
 
+    input.addEventListener("input", () => {
+      validateInput(input, warning, maxScore);
+      calculator();
+    });
 
-        item.className =
-            "score-item";
-
-
-        item.innerHTML = `
-
-            <label>
-                ข้อ ${i}
-            </label>
-
-            <input
-                type="number"
-                id="p1_${i}"
-                min="1"
-                max="4"
-                step="1"
-                placeholder="1 - 4"
-                oninput="calculatePart1()"
-            >
-
-            <div
-                class="error"
-                id="error_p1_${i}">
-            </div>
-
-        `;
-
-
-        grid.appendChild(item);
-
-    }
-
+    row.appendChild(label);
+    row.appendChild(input);
+    row.appendChild(warning);
+    container.appendChild(row);
+  });
 }
 
+function validateInput(input, warning, maxScore) {
+  const raw = input.value.trim();
+  const value = Number(raw);
+  let message = "";
 
+  if (raw !== "") {
+    if (!Number.isFinite(value) || !Number.isInteger(value)) {
+      message = "กรุณากรอกเป็นจำนวนเต็มเท่านั้น";
+    } else if (value < 1 || value > maxScore) {
+      message = "กรอกเกินช่วงที่กำหนด กรุณากรอกคะแนน 1–" + maxScore;
+    }
+  }
 
-/* =====================================================
-   คำนวณ ตอนที่ 1
-===================================================== */
+  warning.textContent = message;
+  warning.hidden = message === "";
+  input.classList.toggle("invalid", message !== "");
+}
 
+function getValidValue(input, maxScore) {
+  const raw = input.value.trim();
+  const value = Number(raw);
+
+  if (
+    raw === "" ||
+    !Number.isFinite(value) ||
+    !Number.isInteger(value) ||
+    value < 1 ||
+    value > maxScore
+  ) {
+    return 0;
+  }
+
+  return value;
+}
+
+function formatScore(value) {
+  return value.toFixed(2);
+}
+
+// คำนวณตอนที่ 1: รวม 15 ข้อ
 function calculatePart1() {
+  let sum = 0;
 
-    let total = 0;
+  part1Labels.forEach((_, index) => {
+    sum += getValidValue(document.getElementById("p1_" + index), 4);
+  });
 
-
-    for (
-        let i = 1;
-        i <= 15;
-        i++
-    ) {
-
-        const input =
-            document.getElementById(
-                `p1_${i}`
-            );
-
-
-        const error =
-            document.getElementById(
-                `error_p1_${i}`
-            );
-
-
-        const value =
-            input.value;
-
-
-        input.classList.remove(
-            "invalid"
-        );
-
-
-        error.textContent = "";
-
-
-        if (value === "") {
-
-            continue;
-
-        }
-
-
-        const score =
-            Number(value);
-
-
-        if (
-            score < 1 ||
-            score > 4 ||
-            !Number.isInteger(score)
-        ) {
-
-            input.classList.add(
-                "invalid"
-            );
-
-
-            error.textContent =
-                "กรุณากรอกคะแนน 1 - 4 เท่านั้น";
-
-
-            continue;
-
-        }
-
-
-        total += score;
-
-    }
-
-
-    document.getElementById(
-        "part1Total"
-    ).textContent = total;
-
-
-    calculateGrandTotal();
-
+  document.getElementById("part1Total").textContent = formatScore(sum);
+  calculateElement1();
 }
 
-
-
-/* =====================================================
-   แปลงคะแนน ตอนที่ 2.1
-===================================================== */
-
-function convertPart21(score) {
-
-    const table = {
-
-        1: 5,
-
-        2: 10,
-
-        3: 15,
-
-        4: 20
-
-    };
-
-
-    return table[score] || 0;
-
-}
-
-
-
-/* =====================================================
-   แปลงคะแนน ตอนที่ 2.2 และ 2.3
-===================================================== */
-
-function convertPart22(score) {
-
-    const table = {
-
-        1: 2.5,
-
-        2: 5,
-
-        3: 7.5,
-
-        4: 10
-
-    };
-
-
-    return table[score] || 0;
-
-}
-
-
-
-/* =====================================================
-   ตรวจสอบคะแนน ตอนที่ 2
-===================================================== */
-
-function validatePart2Input(
-    id,
-    errorId
-) {
-
-    const input =
-        document.getElementById(id);
-
-
-    const error =
-        document.getElementById(errorId);
-
-
-    input.classList.remove(
-        "invalid"
-    );
-
-
-    error.textContent = "";
-
-
-    if (input.value === "") {
-
-        return null;
-
-    }
-
-
-    const score =
-        Number(input.value);
-
-
-    if (
-        score < 1 ||
-        score > 4 ||
-        !Number.isInteger(score)
-    ) {
-
-        input.classList.add(
-            "invalid"
-        );
-
-
-        error.textContent =
-            "กรุณากรอกคะแนน 1 - 4 เท่านั้น";
-
-
-        return null;
-
-    }
-
-
-    return score;
-
-}
-
-
-
-/* =====================================================
-   คำนวณ ตอนที่ 2
-===================================================== */
-
+// คำนวณตอนที่ 2: แปลงคะแนนแต่ละข้อ แล้วคูณ 20 หาร 40
 function calculatePart2() {
+  let convertedSum = 0;
 
-    const s21 =
-        validatePart2Input(
-            "part21",
-            "error21"
-        );
+  part2Labels.forEach((item, index) => {
+    const input = document.getElementById("p2_" + index);
+    const raw = input.value.trim();
+    const warning = document.getElementById("p2_Warning" + index);
 
+    validateInput(input, warning, 4);
 
-    const s22 =
-        validatePart2Input(
-            "part22",
-            "error22"
-        );
+    const score = getValidValue(input, 4);
+    if (score > 0) {
+      convertedSum += item.values[score];
+    }
+  });
 
-
-    const s23 =
-        validatePart2Input(
-            "part23",
-            "error23"
-        );
-
-
-    const score21 =
-        s21 === null
-            ? 0
-            : convertPart21(s21);
-
-
-    const score22 =
-        s22 === null
-            ? 0
-            : convertPart22(s22);
-
-
-    const score23 =
-        s23 === null
-            ? 0
-            : convertPart22(s23);
-
-
-    document.getElementById(
-        "part21Result"
-    ).textContent = score21;
-
-
-    document.getElementById(
-        "part22Result"
-    ).textContent = score22;
-
-
-    document.getElementById(
-        "part23Result"
-    ).textContent = score23;
-
-
-    const rawTotal =
-        score21 +
-        score22 +
-        score23;
-
-
-    const finalScore =
-        (rawTotal * 20) / 40;
-
-
-    document.getElementById(
-        "part2RawTotal"
-    ).textContent =
-        rawTotal.toFixed(2);
-
-
-    document.getElementById(
-        "part2Calculation"
-    ).textContent =
-        finalScore.toFixed(2);
-
-
-    document.getElementById(
-        "part2Total"
-    ).textContent =
-        finalScore.toFixed(2);
-
-
-    calculateGrandTotal();
-
+  const total = convertedSum * 20 / 40;
+  document.getElementById("part2Total").textContent = formatScore(total);
+  calculateElement1();
 }
 
+// รวมคะแนนองค์ประกอบที่ 1
+function calculateElement1() {
+  const part1 = Number(document.getElementById("part1Total").textContent);
+  const part2 = Number(document.getElementById("part2Total").textContent);
+  const total = part1 + part2;
 
+  document.getElementById("element1Part1").textContent = formatScore(part1);
+  document.getElementById("element1Part2").textContent = formatScore(part2);
+  document.getElementById("element1Total").textContent = formatScore(total);
 
-/* =====================================================
-   ตอนที่ 3
-===================================================== */
+  updateSummary();
+}
 
+// องค์ประกอบที่ 2: คะแนน 1–5 คูณ 2
 function calculatePart3() {
+  const input = document.getElementById("part3");
+  const warning = document.getElementById("part3Warning");
 
-    const input =
-        document.getElementById(
-            "part3"
-        );
+  validateInput(input, warning, 5);
 
+  const total = getValidValue(input, 5) * 2;
+  document.getElementById("part3Total").textContent = formatScore(total);
 
-    const error =
-        document.getElementById(
-            "error3"
-        );
-
-
-    input.classList.remove(
-        "invalid"
-    );
-
-
-    error.textContent = "";
-
-
-    if (input.value === "") {
-
-        document.getElementById(
-            "part3Total"
-        ).textContent = "0";
-
-
-        calculateGrandTotal();
-
-        return;
-
-    }
-
-
-    const score =
-        Number(input.value);
-
-
-    if (
-        score < 1 ||
-        score > 5 ||
-        !Number.isInteger(score)
-    ) {
-
-        input.classList.add(
-            "invalid"
-        );
-
-
-        error.textContent =
-            "กรุณากรอกคะแนน 1 - 5 เท่านั้น";
-
-
-        document.getElementById(
-            "part3Total"
-        ).textContent = "0";
-
-
-        calculateGrandTotal();
-
-        return;
-
-    }
-
-
-    const total =
-        score * 2;
-
-
-    document.getElementById(
-        "part3Total"
-    ).textContent =
-        total.toFixed(2);
-
-
-    calculateGrandTotal();
-
+  updateSummary();
 }
 
-
-
-/* =====================================================
-   สร้างช่องคะแนน ตอนที่ 4
-===================================================== */
-
-function createPart4Inputs() {
-
-    const grid =
-        document.getElementById(
-            "part4Grid"
-        );
-
-
-    for (
-        let i = 1;
-        i <= 10;
-        i++
-    ) {
-
-        const item =
-            document.createElement(
-                "div"
-            );
-
-
-        item.className =
-            "score-item";
-
-
-        item.innerHTML = `
-
-            <label>
-                ข้อ ${i}
-            </label>
-
-            <input
-                type="number"
-                id="p4_${i}"
-                min="1"
-                max="4"
-                step="1"
-                placeholder="1 - 4"
-                oninput="calculatePart4()"
-            >
-
-            <div
-                class="error"
-                id="error_p4_${i}">
-            </div>
-
-        `;
-
-
-        grid.appendChild(item);
-
-    }
-
-}
-
-
-
-/* =====================================================
-   คำนวณ ตอนที่ 4
-===================================================== */
-
+// องค์ประกอบที่ 3: รวม 10 ข้อ แล้วหาร 4
 function calculatePart4() {
+  let sum = 0;
 
-    let total = 0;
+  part4Labels.forEach((_, index) => {
+    sum += getValidValue(document.getElementById("p4_" + index), 4);
+  });
 
+  document.getElementById("part4Total").textContent = formatScore(sum / 4);
 
-    for (
-        let i = 1;
-        i <= 10;
-        i++
-    ) {
-
-        const input =
-            document.getElementById(
-                `p4_${i}`
-            );
-
-
-        const error =
-            document.getElementById(
-                `error_p4_${i}`
-            );
-
-
-        const value =
-            input.value;
-
-
-        input.classList.remove(
-            "invalid"
-        );
-
-
-        error.textContent = "";
-
-
-        if (value === "") {
-
-            continue;
-
-        }
-
-
-        const score =
-            Number(value);
-
-
-        if (
-            score < 1 ||
-            score > 4 ||
-            !Number.isInteger(score)
-        ) {
-
-            input.classList.add(
-                "invalid"
-            );
-
-
-            error.textContent =
-                "กรุณากรอกคะแนน 1 - 4 เท่านั้น";
-
-
-            continue;
-
-        }
-
-
-        total += score;
-
-    }
-
-
-    const finalScore =
-        total / 4;
-
-
-    document.getElementById(
-        "part4RawTotal"
-    ).textContent = total;
-
-
-    document.getElementById(
-        "part4Calculation"
-    ).textContent =
-        finalScore.toFixed(2);
-
-
-    document.getElementById(
-        "part4Total"
-    ).textContent =
-        finalScore.toFixed(2);
-
-
-    calculateGrandTotal();
-
+  updateSummary();
 }
 
+// ตารางสรุปคะแนนทั้งหมด
+function updateSummary() {
+  const score1 = Number(document.getElementById("element1Total").textContent);
+  const score2 = Number(document.getElementById("part3Total").textContent);
+  const score3 = Number(document.getElementById("part4Total").textContent);
 
+  document.getElementById("summary1").textContent = formatScore(score1);
+  document.getElementById("summary2").textContent = formatScore(score2);
+  document.getElementById("summary3").textContent = formatScore(score3);
 
-/* =====================================================
-   คำนวณตารางสรุปคะแนน
-===================================================== */
-
-function calculateGrandTotal() {
-
-
-    /* -----------------------------------------
-       ดึงคะแนนทั้ง 4 ตอน
-    ----------------------------------------- */
-
-    const part1 =
-        Number(
-            document.getElementById(
-                "part1Total"
-            ).textContent
-        ) || 0;
-
-
-    const part2 =
-        Number(
-            document.getElementById(
-                "part2Total"
-            ).textContent
-        ) || 0;
-
-
-    const part3 =
-        Number(
-            document.getElementById(
-                "part3Total"
-            ).textContent
-        ) || 0;
-
-
-    const part4 =
-        Number(
-            document.getElementById(
-                "part4Total"
-            ).textContent
-        ) || 0;
-
-
-
-    /* -----------------------------------------
-       องค์ประกอบที่ 1
-       = ตอนที่ 1 + ตอนที่ 2
-    ----------------------------------------- */
-
-    const component1 =
-        part1 + part2;
-
-
-
-    /* -----------------------------------------
-       องค์ประกอบที่ 2
-       = ตอนที่ 3
-    ----------------------------------------- */
-
-    const component2 =
-        part3;
-
-
-
-    /* -----------------------------------------
-       องค์ประกอบที่ 3
-       = ตอนที่ 4
-    ----------------------------------------- */
-
-    const component3 =
-        part4;
-
-
-
-    /* -----------------------------------------
-       คะแนนรวมทั้งหมด
-       = ตอนที่ 1 + 2 + 3 + 4
-    ----------------------------------------- */
-
-    const grandTotal =
-        part1 +
-        part2 +
-        part3 +
-        part4;
-
-
-
-    /* -----------------------------------------
-       แสดงผลตาราง
-    ----------------------------------------- */
-
-    document.getElementById(
-        "component1"
-    ).textContent =
-        component1.toFixed(2);
-
-
-    document.getElementById(
-        "component2"
-    ).textContent =
-        component2.toFixed(2);
-
-
-    document.getElementById(
-        "component3"
-    ).textContent =
-        component3.toFixed(2);
-
-
-    document.getElementById(
-        "grandTotal"
-    ).textContent =
-        grandTotal.toFixed(2);
-
+  document.getElementById("grandTotal").textContent =
+    formatScore(score1 + score2 + score3);
 }
-
-
-
-/* =====================================================
-   ล้างข้อมูล
-===================================================== */
 
 function resetAll() {
+  if (!confirm("ต้องการล้างคะแนนทั้งหมดใช่หรือไม่?")) return;
 
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.value = "";
+    input.classList.remove("invalid");
+  });
 
-    if (
-        !confirm(
-            "ต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?"
-        )
-    ) {
+  document.querySelectorAll(".warning").forEach(warning => {
+    warning.textContent = "";
+    warning.hidden = true;
+  });
 
-        return;
-
-    }
-
-
-    document
-        .querySelectorAll("input")
-        .forEach(
-            input => {
-
-                input.value = "";
-
-                input.classList.remove(
-                    "invalid"
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(".error")
-        .forEach(
-            error => {
-
-                error.textContent = "";
-
-            }
-        );
-
-
-    document.getElementById(
-        "part1Total"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part2Total"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part3Total"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part4Total"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part2RawTotal"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part2Calculation"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part4RawTotal"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part4Calculation"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part21Result"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part22Result"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "part23Result"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "component1"
-    ).textContent = "0.00";
-
-
-    document.getElementById(
-        "component2"
-    ).textContent = "0.00";
-
-
-    document.getElementById(
-        "component3"
-    ).textContent = "0.00";
-
-
-    document.getElementById(
-        "grandTotal"
-    ).textContent = "0.00";
-
+  calculatePart1();
+  calculatePart2();
+  calculatePart3();
+  calculatePart4();
 }
 
+createQuestions("part1Questions", part1Labels, "p1_", 4, calculatePart1);
+createQuestions("part2Questions", part2Labels, "p2_", 4, calculatePart2);
+createQuestions("part4Questions", part4Labels, "p4_", 4, calculatePart4);
 
-
-/* =====================================================
-   เริ่มโปรแกรม
-===================================================== */
-
-createPart1Inputs();
-
-createPart4Inputs();
-
+calculatePart1();
+calculatePart2();
+calculatePart3();
+calculatePart4();
 </script>
-
-
 </body>
-
 </html>
